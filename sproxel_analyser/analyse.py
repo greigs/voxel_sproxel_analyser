@@ -448,6 +448,23 @@ def visualize_voxel_model(voxel_array):
     plt.tight_layout()
     plt.show()
 
+def export_visible_faces_to_stl(voxel_array, output_path, number=3):
+    """
+    Import the STL export function from the dedicated module.
+    This is a wrapper to maintain backward compatibility.
+    
+    Parameters:
+        voxel_array: 3D numpy array containing voxel data
+        output_path: Path where the STL file will be saved
+        number: The number to use for the 3D shape (default: 3)
+    """
+    try:
+        from sproxel_analyser.stl_exporter import export_visible_faces_to_stl as stl_export
+        return stl_export(voxel_array, output_path, number)
+    except ImportError:
+        print("Error importing stl_exporter module. Make sure it's in the correct location.")
+        return False
+
 def analyze_file_format(csv_path):
     """Analyze the format of the input file to help debug issues."""
     with open(csv_path, 'r') as f:
@@ -531,6 +548,9 @@ def main():
     parser.add_argument('csv_file', help='Path to the CSV file containing voxel data')
     parser.add_argument('--debug', action='store_true', help='Print detailed debug information')
     parser.add_argument('--faces-only', action='store_true', help='Only count visible faces without visualization')
+    parser.add_argument('--output-stl', help='Export visible faces to STL file')
+    parser.add_argument('--number', type=int, default=3, choices=range(10),
+                        help='Number to use for 3D shapes in STL export (0-9, default: 3)')
     args = parser.parse_args()
     
     csv_path = args.csv_file
@@ -547,8 +567,17 @@ def main():
         voxel_array = load_voxel_data(csv_path)
         print(f"Loaded voxel data with shape: {voxel_array.shape}")
         
+        # Export to STL if requested
+        if args.output_stl:
+            # Import the STL export functionality only when needed
+            try:
+                from sproxel_analyser.stl_exporter import export_visible_faces_to_stl as stl_export
+                stl_export(voxel_array, args.output_stl, args.number)
+            except ImportError:
+                # Fall back to local function if import fails
+                export_visible_faces_to_stl(voxel_array, args.output_stl, args.number)
         # Count visible faces directly if desired
-        if args.faces_only:
+        elif args.faces_only:
             total_faces, face_breakdown, tile_info = count_visible_faces(voxel_array)
             print(f"Model has {total_faces} visible faces")
             print(f"Face breakdown by direction: {face_breakdown}")
