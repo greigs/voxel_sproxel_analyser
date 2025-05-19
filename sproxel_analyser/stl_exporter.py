@@ -57,8 +57,8 @@ def export_visible_faces_to_stl(voxel_array, output_path, number=3, display_mode
     else:
         depth, height, width = voxel_array.shape
     
-    # Set voxel size to 2cm (20mm)
-    voxel_size = 20.0  # in mm
+    # Set voxel size to 1.25cm (12.5mm)
+    voxel_size = 12.5  # in mm
     
     print(f"Model dimensions: {width}x{height}x{depth} voxels")
     print(f"Physical dimensions: {width*voxel_size/10:.1f}cm x {height*voxel_size/10:.1f}cm x {depth*voxel_size/10:.1f}cm")
@@ -137,9 +137,9 @@ def export_visible_faces_to_stl(voxel_array, output_path, number=3, display_mode
         category_number_size = 7.0 * 0.7   # 7mm size reduced by 30% for top number
         color_number_size = 7.0 * 0.5      # 7mm size reduced by 50% for bottom number
     else:  # cuboids mode
-        cuboid_width = 4.0       # 4mm width for each cuboid
-        cuboid_thickness = 3.0   # 3mm thickness for each cuboid
-        cuboid_gap = 2.0         # 2mm gap between cuboids
+        cuboid_width = 2.0       # 2.0mm width for each cuboid
+        cuboid_thickness = 1.3   # 1.3mm thickness for each cuboid
+        cuboid_gap = 1.0         # 1mm gap between cuboids
     
     # First, analyze the model to categorize faces
     # Track visible face positions for edge and corner analysis
